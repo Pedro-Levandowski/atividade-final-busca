@@ -11,5 +11,29 @@ class DFS(BaseSearch):
         self.depth_limit = depth_limit
 
     def search(self, initial: State) -> SearchResult:
-        # TODO: implemente a DFS aqui
-        raise NotImplementedError("Implemente o método search na classe DFS.")
+        fronteira = [initial]
+        visitados = {initial.tiles: 0}
+
+        expandidos = 0
+        gerados = 1
+        max_fronteira = 1
+
+        while fronteira:
+            atual = fronteira.pop()
+
+            if atual.is_goal:
+                return SearchResult(atual, expandidos, gerados, max_fronteira, atual.cost)
+
+            if atual.cost >= self.depth_limit:
+                continue
+
+            expandidos += 1
+            for filho in reversed(atual.neighbors()):
+                if filho.tiles not in visitados or filho.cost < visitados[filho.tiles]:
+                    visitados[filho.tiles] = filho.cost
+                    fronteira.append(filho)
+                    gerados += 1
+
+            max_fronteira = max(max_fronteira, len(fronteira))
+
+        return SearchResult(None, expandidos, gerados, max_fronteira)
